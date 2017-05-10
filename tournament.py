@@ -14,7 +14,8 @@ def connect():
 def deleteMatches():
     """Remove all the match records from the database."""
     QUERY = """update tb_match
-                set won=0, lost=0;"""
+                set won=0, lost=0
+                where pid in (select pid from tb_player);"""
     conn = None
     rows_deleted = 0
     try:
@@ -35,13 +36,15 @@ def deleteMatches():
 
 def deletePlayers():
     """Remove all the player records from the database."""
-    QUERY = """delete from tb_player;"""
+    QUERY_PLAYER = """delete from tb_player;"""
+    QUERY_MATCH = """delete from tb_match;"""
     conn = None
     rows_deleted = 0
     try:
         conn = connect()
         c = conn.cursor()
-        c.execute(QUERY)
+        c.execute(QUERY_PLAYER)
+        c.execute(QUERY_MATCH)
         rows_deleted = c.rowcount
         conn.commit()
         conn.close()
@@ -83,13 +86,16 @@ def registerPlayer(name):
     Args:
       name: the player's full name (need not be unique).
     """
-    QUERY = """insert into tb_player(pname) values(%s) returning id;"""
+    QUERY_PLAYER = """insert into tb_player(pname) values(%s) returning pid;"""
+    QUERY_MATCH = """insert into tb_match(pid) values(%s) returning pid;"""
     conn = None
     pid = None
     try:
         conn = connect()
         c = conn.cursor()
-        c.execute(QUERY, (name,))
+        c.execute(QUERY_PLAYER, (name,))
+        pid = c.fetchone()[0]
+        c.execute(QUERY_MATCH, (pid,))
         pid = c.fetchone()[0]
         conn.commit()
         conn.close()
@@ -117,9 +123,10 @@ def playerStandings():
     """
     QUERY = """
         select a.pid, a.pname, b.won as wins, b.won+b.lost as matches
-        from tb_player a, tb_match b
-        where a.pid = b.pid
-        order by a.won desc;
+        from tb_player a
+        left join tb_match b
+            on a.pid = b.pid
+        order by b.won desc;
         """
     conn = None
     try:
@@ -187,11 +194,15 @@ def swissPairings():
         name2: the second player's name
     """
     QUERY = """
-        select a.id as id1, a.name as name1, b.id as id2, b.name as name2
+        select a.pid as id1, a.pname as name1, b.pid as id2, b.pname as name2
         from ( select row_number() over(order by won desc)+1 as rank ,
-                id, name from tb_player ) a
+                tb_match.pid, pname from tb_player
+                left join tb_match
+                on tb_match.pid = tb_player.pid ) a
         left join ( select row_number() over(order by won desc) as rank,
-                id, name from tb_player ) b
+                tb_match.pid, pname from tb_player
+                left join tb_match
+                on tb_match.pid = tb_player.pid ) b
             on a.rank = b.rank
         where mod(a.rank, 2) = 0
         order by a.rank;
