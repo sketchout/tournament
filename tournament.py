@@ -25,7 +25,7 @@ def deleteMatches():
         rows_deleted = c.rowcount
         conn.commit()
         conn.close()
-    except( Exception, psycopg2.DatabaseError) as error:
+    except(Exception, psycopg2.DatabaseError) as error:
         print(error)
     finally:
         if conn is not None:
@@ -48,7 +48,7 @@ def deletePlayers():
         rows_deleted = c.rowcount
         conn.commit()
         conn.close()
-    except( Exception, psycopg2.DatabaseError) as error:
+    except(Exception, psycopg2.DatabaseError) as error:
         print(error)
     finally:
         if conn is not None:
@@ -68,7 +68,7 @@ def countPlayers():
         cnt = c.fetchone()[0]
         conn.commit()
         conn.close()
-    except( Exception, psycopg2.DatabaseError) as error:
+    except(Exception, psycopg2.DatabaseError) as error:
         print(error)
     finally:
         if conn is not None:
@@ -99,7 +99,7 @@ def registerPlayer(name):
         pid = c.fetchone()[0]
         conn.commit()
         conn.close()
-    except( Exception, psycopg2.DatabaseError) as error:
+    except(Exception, psycopg2.DatabaseError) as error:
         print(error)
     finally:
         if conn is not None:
@@ -111,8 +111,8 @@ def registerPlayer(name):
 def playerStandings():
     """Returns a list of the players and their win records, sorted by wins.
 
-    The first entry in the list should be the player in first place, or a player
-    tied for first place if there is currently a tie.
+    The first entry in the list should be the player in first place, or
+    a player tied for first place if there is currently a tie.
 
     Returns:
       A list of tuples, each of which contains (id, name, wins, matches):
@@ -136,7 +136,7 @@ def playerStandings():
         rs = c.fetchall()
         conn.commit()
         conn.close()
-    except( Exception, psycopg2.DatabaseError) as error:
+    except(Exception, psycopg2.DatabaseError) as error:
         print(error)
     finally:
         if conn is not None:
@@ -169,7 +169,7 @@ def reportMatch(winner, loser):
         row_updated = c.rowcount
         conn.commit()
         conn.close()
-    except( Exception, psycopg2.DatabaseError) as error:
+    except(Exception, psycopg2.DatabaseError) as error:
         print(error)
     finally:
         if conn is not None:
@@ -215,11 +215,10 @@ def swissPairings():
         rs = c.fetchall()
         conn.commit()
         conn.close()
-    except( Exception, psycopg2.DatabaseError) as error:
+    except(Exception, psycopg2.DatabaseError) as error:
         print(error)
     finally:
         if conn is not None:
             conn.close()
 
     return rs
-
