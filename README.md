@@ -1,5 +1,5 @@
 # Swiss Tournament Code
-This project is connected to RDB course. This course using Vagrant and Virtual Box, 
+This project is connected to RDB course. And using Vagrant and Virtual Box, 
 but can be use any environment which installed with PostgreSQL and Python. 
 
 # Run Procedure
