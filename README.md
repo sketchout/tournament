@@ -12,7 +12,7 @@ how to manipulate the data of tables with python code.
 
 # Run Procedure
     1. create Database & Table
-      1) connect to postgresql with psql
+      1) connect to postgresql with psql command line interface(CLI)
       2) import tournament.sql in psql to create db & table : \i tournament.sql
     2. run test python code 
       1) open bash console : python tournament_test.py
