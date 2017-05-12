@@ -23,10 +23,17 @@ CREATE TABLE matches (
 	loser integer references players(pid)
 );
 
-CREATE TABLE standings (
-    sid serial primary key,
-    pid integer references players(pid),
-    pname text,
-    wins integer,
-    matches integer
+CREATE VIEW view_wins as (
+	SELECT players.pid, count(matches.mid) as wins
+	FROM players left outer join matches
+		on players.pid = matches.winner
+	GROUP BY players.pid
+);
+
+CREATE VIEW view_played as (
+	SELECT players.pid, count(matches.mid) as played
+	FROM players left outer join matches
+		on players.pid = matches.winner
+			or players.pid = matches.loser
+	GROUP BY players.pid
 );
